@@ -15,30 +15,8 @@
 
 using namespace std;
 
-/**
- * This is a toString function that displays information
- * from Node in the form of a string
- * @param: ostream Os and const Vertex V
- * @return: Os 
- **/  
-ostream &operator<<(ostream &Os, const Vertex &V) {
-  Os << V.label;
-  return Os;
-}
-
-/**
- * --------------------------------------------------------------?
- * @param: ostream Os and const Vertex V
- * @return: Os 
- **/ 
 Vertex::Vertex(const string &label) {
   this->label = label;
   visited = false; 
 }
 
-/**
- * Destructor, deletes Nodes
- * @param: No parameters
- * @return: No return 
- **/ 
-Vertex::~Vertex() { neighbors.clear(); }
