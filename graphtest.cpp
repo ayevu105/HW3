@@ -129,18 +129,19 @@ void testGraph0Dijkstra() {
   map<string, int> weights;
   map<string, string> previous;
   tie(weights, previous) = g.dijkstra("A");
+  
   // cout << "Dijkstra(A) weights is " << map2string(weights) << endl;
   assert(map2string(weights) == "[B:1][C:4]" && "Dijkstra(A) weights");
   // cout << "Dijkstra(A) previous is " << map2string(previous) << endl;
   assert(map2string(previous) == "[B:A][C:B]" && "Dijkstra(A) previous");
-
   tie(weights, previous) = g.dijkstra("B");
   assert(map2string(weights) == "[C:3]" && "Dijkstra(B) weights");
   assert(map2string(previous) == "[C:B]" && "Dijkstra(B) previous");
-
+cout << "testGraph0Dijkstra" << endl;
   tie(weights, previous) = g.dijkstra("X");
   assert(map2string(weights).empty() && "Dijkstra(C) weights");
   assert(map2string(previous).empty() && "Dijkstra(C) previous");
+  
 }
 
 void testGraph0NotDirected() {
@@ -183,25 +184,26 @@ void testGraph0NotDirected() {
   assert(map2string(weights).empty() && "Dijkstra(C) weights");
   assert(map2string(previous).empty() && "Dijkstra(C) previous");
 
-  // globalSS.str("");
-  // int mstLength = g.mstPrim("A", edgePrinter);
-  // assert(mstLength == 4 && "mst A is 4");
-  // assert(globalSS.str() == "[AB 1][BC 3]" && "mst A is [AB 1][BC 3]");
+//commented out because mstPrim is optional.
+//   globalSS.str("");
+// //   int mstLength = g.mstPrim("A", edgePrinter);
+//   assert(mstLength == 4 && "mst A is 4");
+//   assert(globalSS.str() == "[AB 1][BC 3]" && "mst A is [AB 1][BC 3]");
 
-  // globalSS.str("");
-  // mstLength = g.mstPrim("B", edgePrinter);
-  // assert(mstLength == 4 && "mst 4 is 4");
-  // assert(globalSS.str() == "[BA 1][BC 3]");
+//   globalSS.str("");
+//   mstLength = g.mstPrim("B", edgePrinter);
+//   assert(mstLength == 4 && "mst 4 is 4");
+//   assert(globalSS.str() == "[BA 1][BC 3]");
 
-  // globalSS.str("");
-  // mstLength = g.mstPrim("C", edgePrinter);
-  // assert(mstLength == 4 && "mst C is 4");
-  // assert(globalSS.str() == "[CB 3][BA 1]");
+//   globalSS.str("");
+//   mstLength = g.mstPrim("C", edgePrinter);
+//   assert(mstLength == 4 && "mst C is 4");
+//   assert(globalSS.str() == "[CB 3][BA 1]");
 
-  // globalSS.str("");
-  // mstLength = g.mstPrim("X", edgePrinter);
-  // assert(mstLength == -1 && "mst X is -1");
-  // assert(globalSS.str().empty() && "mst for vertex not found");
+//   globalSS.str("");
+//   mstLength = g.mstPrim("X", edgePrinter);
+//   assert(mstLength == -1 && "mst X is -1");
+//   assert(globalSS.str().empty() && "mst for vertex not found");
 }
 
 void testGraph1() {
@@ -241,7 +243,7 @@ void testAll() {
   testGraphBasic();
   testGraph0DFS();
   testGraph0BFS();
-  // testGraph0Dijkstra();
-  // testGraph0NotDirected();
+  testGraph0Dijkstra();
+  testGraph0NotDirected();
   testGraph1();
 }
