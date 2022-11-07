@@ -3,7 +3,6 @@
  */
 
 #include <iostream>
-
 using namespace std;
 
 // forward declaration, implementation in xxxtest.cpp
