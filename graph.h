@@ -8,6 +8,8 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#include "edge.h"
+#include "vertex.h"
 #include <map>
 #include <string>
 
@@ -82,16 +84,16 @@ public:
   // Path cost is recorded in the map passed in, e.g. weight["F"] = 10
   // How to get to the vertex is recorded previous["F"] = "C"
   // @return a pair made up of two map objects, Weights and Previous
-  pair<map<string, int>, map<string, string>>
+  pair<map<string, int>, map<string, string> >
   dijkstra(const string &startLabel) const;
 
   // minimum spanning tree using Prim's algorithm
   // ONLY works for NONDIRECTED graphs
   // ASSUMES the edge [P->Q] has the same weight as [Q->P]
   // @return length of the minimum spanning tree or -1 if start vertex not
-  int mstPrim(const string &startLabel,
-              void visit(const string &from, const string &to,
-                         int weight)) const;
+  // int mstPrim(const string &startLabel,
+  //             void visit(const string &from, const string &to,
+  //                        int weight)) const;
 
   // minimum spanning tree using Kruskal's algorithm
   // ONLY works for NONDIRECTED graphs
@@ -100,6 +102,25 @@ public:
   int mstKruskal(const string &startLabel,
                  void visit(const string &from, const string &to,
                             int weight)) const;
+
+private:
+
+  bool directionalEdges;
+
+  int numberOfVertices;
+
+  int numberOfEdges;
+
+  vector<Vertex*> vertices;
+
+  bool find (const string &label, Vertex *&V) const;
+
+  void dfsHelper(Vertex *vert, void visit(const string &label));
+  
+  static vector<Edge *> smallestNeighbors(vector<Vertex *> visitedArray);
+
+  static Edge *minimumDistance(vector<Edge *> smallestEdge, map<string, int> weights);
+
 };
 
 #endif // GRAPH_H
