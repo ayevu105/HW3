@@ -87,21 +87,6 @@ public:
   pair<map<string, int>, map<string, string> >
   dijkstra(const string &startLabel) const;
 
-  // minimum spanning tree using Prim's algorithm
-  // ONLY works for NONDIRECTED graphs
-  // ASSUMES the edge [P->Q] has the same weight as [Q->P]
-  // @return length of the minimum spanning tree or -1 if start vertex not
-  // int mstPrim(const string &startLabel,
-  //             void visit(const string &from, const string &to,
-  //                        int weight)) const;
-
-  // minimum spanning tree using Kruskal's algorithm
-  // ONLY works for NONDIRECTED graphs
-  // ASSUMES the edge [P->Q] has the same weight as [Q->P]
-  // @return length of the minimum spanning tree or -1 if start vertex not
-  int mstKruskal(const string &startLabel,
-                 void visit(const string &from, const string &to,
-                            int weight)) const;
 
 private:
 
