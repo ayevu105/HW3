@@ -1,5 +1,6 @@
 #include "graph.h"
 #include <algorithm>
+#include <cassert>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -14,15 +15,16 @@ using namespace std;
 // constructor, empty graph
 // directionalEdges defaults to true
 Graph::Graph(bool directionalEdges) {
-  numberOfVertices = 0;
-  numberOfEdges = 0;
+    this->directionalEdges = directionalEdges;
+    numberOfVertices = 0;
+    numberOfEdges = 0;
 }
 
 // destructor
 Graph::~Graph() {
   for (auto temp : vertices) {
-    for (auto &neigh : temp->neighbors) {
-      delete neigh;
+    for (auto &n : temp->neighbors) {
+      delete n;
     }
     temp->neighbors.clear();
     delete temp;
@@ -46,23 +48,21 @@ int Graph::edgesSize() const {
 // @return number of edges from given vertex, -1 if vertex not found
 int Graph::vertexDegree(const string &label) const { 
   Vertex *vert = nullptr;
-  if (this->find(label,vert)) {
+  if (this->find(label, vert)) {
     return vert->neighbors.size();
-  } else {
-  return -1;
   }
+  return -1;
 }
 
 // @return true if vertex added, false if it already is in the graph
 bool Graph::add(const string &label) { 
-  if(!this->contains(label)) {
+  if (!this->contains(label)) {
     auto vert = new Vertex(label);
     vertices.push_back(vert);
     numberOfVertices++;
     return true; 
-  } else {
-    return false;
   }
+    return false;
 }
 
 
@@ -165,20 +165,20 @@ bool Graph::connect(const string &from, const string &to, int weight) {
 
 bool Graph::disconnect(const string &from, const string &to) { 
   Vertex *vert = nullptr;
-  if(!find(from, vert)) {
+  if (!find(from, vert)) {
     return false;
   }
 
-  for(int i = 0; i < vert->neighbors.size(); i++) {
+  for (int i = 0; i < vert->neighbors.size(); i++) {
     Edge *e = vert->neighbors.at(i);
-    if(from == e->from->label && to == e->to->label) {
+    if (from == e->from->label && to == e->to->label) {
       vert->neighbors.erase(vert->neighbors.begin() + i);
       delete e;
       numberOfEdges--;
-      if(!directionalEdges) {
+      if (!directionalEdges) {
         Vertex *vert2 = nullptr;
         find(to, vert2);
-        for(int j = 0; j < vert2->neighbors.size(); j++) {
+        for (int j = 0; j < vert2->neighbors.size(); j++) {
           Edge *e2 = vert2->neighbors.at(j);
           if (to == e2->from->label && from == e2->to->label) {
             vert2->neighbors.erase(vert2->neighbors.begin() + j);
@@ -197,25 +197,25 @@ return false;
 
 // depth-first traversal starting from given startLabel
 void Graph::dfs(const string &startLabel, void visit(const string &label)) {
-  for(auto &vert : vertices) {
+  for (auto &vert : vertices) {
     vert->visited = false;
   }
   
   Vertex *vert = nullptr;
-  if(!find(startLabel, vert)) {
+  if (!find(startLabel, vert)) {
     return;
   }
   dfsHelper(vert, visit);
 }
 
 void Graph::dfsHelper(Vertex *vert, void visit(const string &label)) {
-  if(vert == nullptr) {
+  if (vert == nullptr) {
     return;
   }
 
   vert->visited = true;
   visit(vert->label);
-  for(auto &neighbor : vert->neighbors) {
+  for (auto &neighbor : vert->neighbors) {
     Vertex *temp = neighbor->to;
     if (!temp->visited) {
       dfsHelper(temp, visit);
@@ -256,20 +256,20 @@ pair<map<string, int>, map<string, string>>
 Graph::dijkstra(const string &startLabel) const {
   map<string, int> weights;
   map<string, string> previous;
-  for (auto &vert : vertices) {
-    vert->visited = false;
+  for (auto &v : vertices) {
+    v->visited = false;
   }
   
-  Vertex *vert = nullptr;
-  if (!find(startLabel, vert)) {
+  Vertex *v = nullptr;
+  if (!find(startLabel, v)) {
     return make_pair(weights, previous);
   }
   
   vector<Vertex *> visitedArray;
-  vert->visited = true;
-  visitedArray.push_back(vert);
+  v->visited = true;
+  visitedArray.push_back(v);
   for (int i = 0; i < visitedArray.size(); i++) {
-    vector <Edge *> smallestEdge = smallestNeighbors(visitedArray);
+    vector<Edge *> smallestEdge = smallestNeighbors(visitedArray);
     Edge *e = minimumDistance(smallestEdge, weights);
     if (e == nullptr) {
       break;
@@ -292,20 +292,21 @@ Graph::dijkstra(const string &startLabel) const {
 vector<Edge *> Graph::smallestNeighbors(vector<Vertex *> visitedArray) {
   vector<Edge *> smallestEdge;
   for (int i = 0; i < visitedArray.size(); i++) {
-  vector<Edge *> neighbor = visitedArray.at(i)->neighbors;
+  vector<Edge *> n = visitedArray.at(i)->neighbors;
   Edge *min; 
-  if (neighbor.empty()) {
+  if (n.empty()) {
     visitedArray.erase(visitedArray.begin() + i);
     i--;
+    continue;
   }
   int e = 0;
-  min = neighbor[e];
-  while (e + 1 < neighbor.size() && min->to->visited) {
-    min = neighbor[e++];
+  min = n[e];
+  while (e + 1 < n.size() && min->to->visited) {
+    min = n[++e];
   }
 
-  for (int j = e + 1; j < neighbor.size(); j++) {
-    Edge *temp = neighbor.at(j);
+  for (int j = e + 1; j < n.size(); j++) {
+    Edge *temp = n.at(j);
     if (temp->to->visited) {
       continue;
     }
@@ -316,6 +317,7 @@ vector<Edge *> Graph::smallestNeighbors(vector<Vertex *> visitedArray) {
   if (min == nullptr || min->to->visited) {
     visitedArray.erase(visitedArray.begin() + i);
     i--;
+    continue;
   }
   smallestEdge.push_back(min);
   }
@@ -341,21 +343,9 @@ Edge *Graph::minimumDistance(vector<Edge *> smallestEdge, map<string, int> weigh
       min = temp;
     }
   }
+  return min;
 }
 
-// // minimum spanning tree using Prim's algorithm
-// int Graph::mstPrim(const string &startLabel,
-//                    void visit(const string &from, const string &to,
-//                               int weight)) const {
-//   return -1;
-// }
-
-// minimum spanning tree using Prim's algorithm
-int Graph::mstKruskal(const string &startLabel,
-                      void visit(const string &from, const string &to,
-                                 int weight)) const {
-  return -1;
-}
 
 bool Graph::find(const string &label, Vertex *&vert) const {
   for (auto &vertex : vertices) {
