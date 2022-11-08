@@ -1,4 +1,4 @@
-/* @file TreadedBST.cpp
+/* @file graph.cpp
  * @brief The following code gives the implementations of the following functions that
  * were listed in the Graph Project assignment.
  * @author Anthony Vu
@@ -56,9 +56,9 @@ int Graph::edgesSize() const {
  * @param label is the string referenced
  */
 int Graph::vertexDegree(const string &label) const { 
-  Vertex *vert = nullptr;
-  if (this->find(label, vert)) {
-    return vert->neighbors.size();
+  Vertex *v = nullptr;
+  if (this->find(label, v)) {
+    return v->neighbors.size();
   }
   return -1;
 }
@@ -69,8 +69,8 @@ int Graph::vertexDegree(const string &label) const {
  */
 bool Graph::add(const string &label) { 
   if (!this->contains(label)) {
-    auto vert = new Vertex(label);
-    vertices.push_back(vert);
+    auto v = new Vertex(label);
+    vertices.push_back(v);
     numberOfVertices++;
     return true; 
   }
@@ -84,8 +84,8 @@ bool Graph::add(const string &label) {
  * @param label is the string reference
  */
 bool Graph::contains(const string &label) const {
-  for (auto &vert : vertices) {
-    if (vert->label == label) {
+  for (auto &v : vertices) {
+    if (v->label == label) {
       return true;
     }
   }
@@ -99,15 +99,15 @@ bool Graph::contains(const string &label) const {
  */
 string Graph::getEdgesAsString(const string &label) const { 
   string s; 
-  Vertex *vert = nullptr;
-  if(this->find(label, vert)) {
-    if (vert->neighbors.empty()) {
+  Vertex *v = nullptr;
+  if(this->find(label, v)) {
+    if (v->neighbors.empty()) {
       return s;
     } 
-    s = s + vert->neighbors[0]->to->label;
-    s = s + "(" + to_string(vert->neighbors[0]->weight) + ")";
+    s = s + v->neighbors[0]->to->label;
+    s = s + "(" + to_string(v->neighbors[0]->weight) + ")";
 
-    for (auto it = vert->neighbors.begin() + 1; it != vert->neighbors.end(); ++it) {
+    for (auto it = v->neighbors.begin() + 1; it != v->neighbors.end(); ++it) {
       string l = (*it)->to->label;
       int w = (*it)->weight;
       s = s + "," + l;
@@ -125,33 +125,33 @@ bool Graph::connect(const string &from, const string &to, int weight) {
   if(from == to) {
     return false;
   }
-  Vertex *vert1 = nullptr;
-  Vertex *vert2 = nullptr;
+  Vertex *v1 = nullptr;
+  Vertex *v2 = nullptr;
 
-  if(!find(from, vert1)) {
-    vert1 = new Vertex(from);
-    vertices.push_back(vert1);
+  if(!find(from, v1)) {
+    v1 = new Vertex(from);
+    vertices.push_back(v1);
     numberOfVertices++;
   }
 
-  if(!find(to, vert2)) {
-    vert2 = new Vertex(to);
-    vertices.push_back(vert2);
+  if(!find(to, v2)) {
+    v2 = new Vertex(to);
+    vertices.push_back(v2);
     numberOfVertices++;
   }
   
   bool c1 = false;
   bool c2 = false;
-  auto e1 = new Edge (vert1, vert2, weight);
+  auto e1 = new Edge (v1, v2, weight);
 
-  for(int i = 0; i < vert1->neighbors.size(); i++) {
-    Edge *temp = vert1->neighbors.at(i);
+  for(int i = 0; i < v1->neighbors.size(); i++) {
+    Edge *temp = v1->neighbors.at(i);
     if (from == temp->from->label && to == temp->to->label) {
       delete e1;
       return false;
     }
     if (to < temp->to->label) {
-      vert1->neighbors.insert(vert1->neighbors.begin() + i, e1);
+      v1->neighbors.insert(v1->neighbors.begin() + i, e1);
       numberOfEdges++;
       c1 = true;
       break;
@@ -159,26 +159,26 @@ bool Graph::connect(const string &from, const string &to, int weight) {
   }
 
   if(!c1) {
-    vert1->neighbors.push_back(e1);
+    v1->neighbors.push_back(e1);
     numberOfEdges++;
   }
 
   if(!directionalEdges) {
-    auto e2 = new Edge(vert2, vert1, weight);
-    for (int i = 0; i < vert2->neighbors.size(); i++) {
-      Edge *temp = vert2->neighbors.at(i);
+    auto e2 = new Edge(v2, v1, weight);
+    for (int i = 0; i < v2->neighbors.size(); i++) {
+      Edge *temp = v2->neighbors.at(i);
       if(from == temp->from->label && to == temp->to->label) {
         delete e2;
         return false;
       } 
       if (to < temp->to->label) {
-        vert2->neighbors.insert(vert2->neighbors.begin() + i, e2);
+        v2->neighbors.insert(v2->neighbors.begin() + i, e2);
         c2 = true;
         break;
       }
     }
     if (!c2) {
-      vert2->neighbors.push_back(e2);
+      v2->neighbors.push_back(e2);
     }
   }
   return true;
@@ -189,24 +189,24 @@ bool Graph::connect(const string &from, const string &to, int weight) {
  * @param string from and to are references
  */
 bool Graph::disconnect(const string &from, const string &to) { 
-  Vertex *vert = nullptr;
-  if (!find(from, vert)) {
+  Vertex *v = nullptr;
+  if (!find(from, v)) {
     return false;
   }
 
-  for (int i = 0; i < vert->neighbors.size(); i++) {
-    Edge *e = vert->neighbors.at(i);
+  for (int i = 0; i < v->neighbors.size(); i++) {
+    Edge *e = v->neighbors.at(i);
     if (from == e->from->label && to == e->to->label) {
-      vert->neighbors.erase(vert->neighbors.begin() + i);
+      v->neighbors.erase(v->neighbors.begin() + i);
       delete e;
       numberOfEdges--;
       if (!directionalEdges) {
-        Vertex *vert2 = nullptr;
-        find(to, vert2);
-        for (int j = 0; j < vert2->neighbors.size(); j++) {
-          Edge *e2 = vert2->neighbors.at(j);
+        Vertex *v2 = nullptr;
+        find(to, v2);
+        for (int j = 0; j < v2->neighbors.size(); j++) {
+          Edge *e2 = v2->neighbors.at(j);
           if (to == e2->from->label && from == e2->to->label) {
-            vert2->neighbors.erase(vert2->neighbors.begin() + j);
+            v2->neighbors.erase(v2->neighbors.begin() + j);
             delete e2;
             break;
           }
@@ -224,27 +224,27 @@ return false;
  * @param startLabel is where the traversal starts and calls visit
  */
 void Graph::dfs(const string &startLabel, void visit(const string &label)) {
-  for (auto &vert : vertices) {
-    vert->visited = false;
+  for (auto &v : vertices) {
+    v->visited = false;
   }
   
-  Vertex *vert = nullptr;
-  if (!find(startLabel, vert)) {
+  Vertex *v = nullptr;
+  if (!find(startLabel, v)) {
     return;
   }
-  dfsHelper(vert, visit);
+  dfsHelper(v, visit);
 }
 
 /* dfsHelper is the helper function of the depth first search
  */
-void Graph::dfsHelper(Vertex *vert, void visit(const string &label)) {
-  if (vert == nullptr) {
+void Graph::dfsHelper(Vertex *v, void visit(const string &label)) {
+  if (v == nullptr) {
     return;
   }
 
-  vert->visited = true;
-  visit(vert->label);
-  for (auto &neighbor : vert->neighbors) {
+  v->visited = true;
+  visit(v->label);
+  for (auto &neighbor : v->neighbors) {
     Vertex *temp = neighbor->to;
     if (!temp->visited) {
       dfsHelper(temp, visit);
@@ -256,17 +256,17 @@ void Graph::dfsHelper(Vertex *vert, void visit(const string &label)) {
  * @param startLabel is where the traversal starts and calls visit
  */
 void Graph::bfs(const string &startLabel, void visit(const string &label)) {
-  for (auto &vert : vertices) {
-    vert->visited = false;
+  for (auto &v : vertices) {
+    v->visited = false;
   }
 
-  Vertex *vert = nullptr;
-  if (!find(startLabel, vert)) {
+  Vertex *v = nullptr;
+  if (!find(startLabel, v)) {
     return;
   }
-  vert->visited = true;
+  v->visited = true;
   queue<Vertex *> q;
-  q.push(vert);
+  q.push(v);
   while (!q.empty()) {
     Vertex *temp = q.front();
     q.pop();
@@ -303,8 +303,8 @@ Graph::dijkstra(const string &startLabel) const {
   v->visited = true;
   visitedArray.push_back(v);
   for (int i = 0; i < visitedArray.size(); i++) {
-    vector<Edge *> smallestEdge = smallestNeighbors(visitedArray);
-    Edge *e = minimumDistance(smallestEdge, weights);
+    vector<Edge *> smallestEdge = dijakstraNeighborHelper(visitedArray);
+    Edge *e = dijakstraDistanceHelper(smallestEdge, weights);
     if (e == nullptr) {
       break;
     }
@@ -388,11 +388,13 @@ Edge *Graph::dijakstraDistanceHelper(vector<Edge *> smallestEdge, map<string, in
   return min;
 }
 
-
-bool Graph::find(const string &label, Vertex *&vert) const {
-  for (auto &vertex : vertices) {
-    if (vertex->label == label) {
-      vert = vertex; 
+/* find looks for a specific edge in the graph
+ * @param label is the string being referenced
+ */
+bool Graph::find(const string &label, Vertex *&vertex) const {
+  for (auto &v : vertices) {
+    if (v->label == label) {
+      vertex = v; 
       return true;
     }
   }

@@ -1,12 +1,12 @@
-/**
- * Edge is the simplest structure of the graph
- * All edges are directed
- * Each edge belongs to a vertex
+/* @file edge.h
+ * @brief The following code gives the declarations of the edge class
+ * @author Anthony Vu
+ * @date 11/07/2022
  */
 #ifndef EDGE_H
 #define EDGE_H
 
-// forward declaration for class Vertex
+// forward declaration for vertex.cpp
 class Vertex;
 
 class Edge {
@@ -17,7 +17,8 @@ class Edge {
   int weight = 0;
   Vertex * to;
   Vertex * from;
-  /** constructor with label and weight */
+
+  // edge constructor with label and weight 
    Edge(Vertex *from, Vertex *to, int weight);
 
 };

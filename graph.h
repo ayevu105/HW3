@@ -1,8 +1,8 @@
-/**
- * A graph is made up of vertices and edges.
- * Vertex labels are unique.
- * A vertex can be connected to other vertices via weighted, directed edge.
- * A vertex cannot connect to itself or have multiple edges to the same vertex
+/* @file graph.h
+ * @brief The following code gives the declarations of the following functions that
+ * were listed in the Graph Projects assignment. 
+ * @author Anthony Vu
+ * @date 11/07/2022
  */
 
 #ifndef GRAPH_H

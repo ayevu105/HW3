@@ -5,7 +5,7 @@
 #include <iostream>
 using namespace std;
 
-// forward declaration, implementation in xxxtest.cpp
+// forward declaration, implementation in graphtest.cpp
 void testAll();
 
 int main() {

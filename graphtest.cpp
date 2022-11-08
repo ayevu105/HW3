@@ -1,6 +1,6 @@
 /**
  * Testing BST - Binary Search Tree functions
- *
+ * Commented out mst calls because it is listed as optional on assignment page
  * @author Yusuf Pisan
  * @date 19 Oct 2019
  */
