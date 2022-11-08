@@ -1,3 +1,10 @@
+/* @file TreadedBST.cpp
+ * @brief The following code gives the implementations of the following functions that
+ * were listed in the Graph Project assignment.
+ * @author Anthony Vu
+ * @date 11/7/2022
+ */
+
 #include "graph.h"
 #include <algorithm>
 #include <cassert>
@@ -35,17 +42,19 @@ Graph::~Graph() {
 
 }
 
-// @return total number of vertices
+// verticesSize returns the total number of vertices
 int Graph::verticesSize() const { 
   return numberOfVertices; 
 }
 
-// @return total number of edges
+// edgesSize returns the total number of edges
 int Graph::edgesSize() const { 
   return numberOfEdges; 
 }
 
-// @return number of edges from given vertex, -1 if vertex not found
+/* VertexDegree returns the number of edges from given vertex, -1 if vertex not found
+ * @param label is the string referenced
+ */
 int Graph::vertexDegree(const string &label) const { 
   Vertex *vert = nullptr;
   if (this->find(label, vert)) {
@@ -54,7 +63,10 @@ int Graph::vertexDegree(const string &label) const {
   return -1;
 }
 
-// @return true if vertex added, false if it already is in the graph
+/* add is the function to add vertices to the graph, it returns 
+ * true if the vertext is added, false if it already is in the graph
+ * @param label is the string referenced
+ */
 bool Graph::add(const string &label) { 
   if (!this->contains(label)) {
     auto vert = new Vertex(label);
@@ -67,7 +79,10 @@ bool Graph::add(const string &label) {
 
 
 
-/** return true if vertex already in graph */
+/* contains checks if a vertex is already in the graph, it returns
+ * true if vertex already in graph and false otherwise. 
+ * @param label is the string reference
+ */
 bool Graph::contains(const string &label) const {
   for (auto &vert : vertices) {
     if (vert->label == label) {
@@ -77,8 +92,11 @@ bool Graph::contains(const string &label) const {
   return false;
 }
 
-// @return string representing edges and weights, "" if vertex not found
-// A-3->B, A-5->C should return B(3),C(5)
+/* getEdgesAsString creates a string of edges and weights, it returns
+ * string representing edges and weights, "" if vertex not found 
+ * A-3->B, A-5->C should return B(3),C(5)
+ * @param label is the string referenced
+ */
 string Graph::getEdgesAsString(const string &label) const { 
   string s; 
   Vertex *vert = nullptr;
@@ -99,7 +117,10 @@ string Graph::getEdgesAsString(const string &label) const {
     return s;
 }
 
-// @return true if successfully connected
+/* connect connects two vertices together, it returns true if the 
+ * vertices are successfully connected
+ * @param strings from and to are the references and weight is the weight of edge
+ */
 bool Graph::connect(const string &from, const string &to, int weight) {
   if(from == to) {
     return false;
@@ -163,6 +184,10 @@ bool Graph::connect(const string &from, const string &to, int weight) {
   return true;
 }
 
+/* disconnect disconnects two vertices from eachother and removes the edge from the graph, 
+ * it returns true if the edge is successfully deleted
+ * @param string from and to are references
+ */
 bool Graph::disconnect(const string &from, const string &to) { 
   Vertex *vert = nullptr;
   if (!find(from, vert)) {
@@ -195,7 +220,9 @@ return false;
 
 
 
-// depth-first traversal starting from given startLabel
+/* dfs is the implementation of a depth first search
+ * @param startLabel is where the traversal starts and calls visit
+ */
 void Graph::dfs(const string &startLabel, void visit(const string &label)) {
   for (auto &vert : vertices) {
     vert->visited = false;
@@ -208,6 +235,8 @@ void Graph::dfs(const string &startLabel, void visit(const string &label)) {
   dfsHelper(vert, visit);
 }
 
+/* dfsHelper is the helper function of the depth first search
+ */
 void Graph::dfsHelper(Vertex *vert, void visit(const string &label)) {
   if (vert == nullptr) {
     return;
@@ -223,7 +252,9 @@ void Graph::dfsHelper(Vertex *vert, void visit(const string &label)) {
   }
 }
 
-// breadth-first traversal starting from startLabel
+/* bfs is the implementation of a breadth first search
+ * @param startLabel is where the traversal starts and calls visit
+ */
 void Graph::bfs(const string &startLabel, void visit(const string &label)) {
   for (auto &vert : vertices) {
     vert->visited = false;
@@ -252,6 +283,9 @@ void Graph::bfs(const string &startLabel, void visit(const string &label)) {
 
 // store the weights in a map
 // store the previous label in a map
+/* dijkstra is the implementation of dijakstras algorithm
+ * @param startLabel is where the traversal starts
+ */
 pair<map<string, int>, map<string, string>>
 Graph::dijkstra(const string &startLabel) const {
   map<string, int> weights;
@@ -289,7 +323,11 @@ Graph::dijkstra(const string &startLabel) const {
   return make_pair(weights, previous);
 }
 
-vector<Edge *> Graph::smallestNeighbors(vector<Vertex *> visitedArray) {
+/* dijakstraNeighborHelper is the helper function to dijakstra, it finds the smallest
+ * neighbor vector and returns it 
+ * @param visited array vector
+ */
+vector<Edge *> Graph::dijakstraNeighborHelper(vector<Vertex *> visitedArray) {
   vector<Edge *> smallestEdge;
   for (int i = 0; i < visitedArray.size(); i++) {
   vector<Edge *> n = visitedArray.at(i)->neighbors;
@@ -324,7 +362,11 @@ vector<Edge *> Graph::smallestNeighbors(vector<Vertex *> visitedArray) {
   return smallestEdge;
 }
 
-Edge *Graph::minimumDistance(vector<Edge *> smallestEdge, map<string, int> weights) {
+/* dijakstraDistanceHelper is the helper function to dijakstra, it finds the smallest
+ * distance and returns it 
+ * @param vector of the smallest edge and a map
+ */
+Edge *Graph::dijakstraDistanceHelper(vector<Edge *> smallestEdge, map<string, int> weights) {
   if (smallestEdge.empty()) {
     return nullptr;
   }
