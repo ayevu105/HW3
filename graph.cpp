@@ -77,8 +77,6 @@ bool Graph::add(const string &label) {
     return false;
 }
 
-
-
 /* contains checks if a vertex is already in the graph, it returns
  * true if vertex already in graph and false otherwise. 
  * @param label is the string reference
