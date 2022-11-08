@@ -102,9 +102,9 @@ private:
 
   void dfsHelper(Vertex *vert, void visit(const string &label));
   
-  static vector<Edge *> smallestNeighbors(vector<Vertex *> visitedArray);
+  static vector<Edge *>dijakstraNeighborHelper(vector<Vertex *> visitedArray);
 
-  static Edge *minimumDistance(vector<Edge *> smallestEdge, map<string, int> weights);
+  static Edge *dijakstraDistanceHelper(vector<Edge *> smallestEdge, map<string, int> weights);
 
 };
 
